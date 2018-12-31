@@ -9,11 +9,29 @@
     <script language="javascript" type="text/javascript" src="nn.js"></script>
     <script language="javascript" type="text/javascript" src="sketch.js"></script>
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.0/css/all.css" integrity="sha384-aOkxzJ5uQz7WBObEZcHvV5JvRW3TUc2rNPA7pe3AwnsUohiw1Vj2Rgx2KSOkF5+h" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
     <body>
-        <h1>Neural Network built with p5</h1>
-        <p>This is a demonstration of a neural network trained to recognize digits using
-            the <a href="http://yann.lecun.com/exdb/mnist/">MNIST</a> database. It's based
-            Tariq Rashid's book <a href="http://amzn.to/2o6WqFj" target="_blank">Make Your Own Neural Network</a>.</p>
+        <div id="home-page-wrapper">
+            <div class="home-page-background"></div>
+            <div class="home-page-background second-background"></div>
+            <div id="home-page-container">
+                <div id="home-page-brand-name">P5 Neural Network &nbsp;
+                    <!--<i id="reset-btn" class="fas fa-angle-double-left"></i>&nbsp;-->
+                    <!--<i id="pause-btn" class="fas fa-pause" style="display: none"></i>-->
+                    <!--<i id="play-btn" class="fas fa-play"></i>&nbsp;-->
+                </div>
+                <div id="statusContainer">
+                    <div id="statusDataContainer">
+                        <div id="statusDataTextContainer">
+                            <!--<h6 class="buttonHeader"><span id="learning-rate-status-text"></span></h6>-->
+                            <!--<h6 class="buttonHeader"><span id="count-status-text"></span></h6>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </body>
 </html>

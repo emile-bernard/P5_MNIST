@@ -6,41 +6,62 @@
 // https://github.com/makeyourownneuralnetwork/
 
 // Neural Network
-var nn;
+let nn;
 
 // Train and Testing Data
-var training;
-var testing;
+let training;
+let testing;
 
 // Where are we in the training and testing data
 // (for animation)
-var trainingIndex = 0;
-var testingIndex = 0;
+let trainingIndex = 0;
+let testingIndex = 0;
 
 // How many times through all the training data
-var epochs = 0;
+let epochs = 0;
 
 // Network configuration
-var input_nodes = 784;
-var hidden_nodes = 256;
-var output_nodes = 10;
+let input_nodes = 784;
+let hidden_nodes = 256;
+let output_nodes = 10;
 
 // Learning rate
-var learning_rate = 0.1;
+let learning_rate = 0.1;
 
 // How is the network doing
-var totalCorrect = 0;
-var totalGuesses = 0;
+let totalCorrect = 0;
+let totalGuesses = 0;
 
 // Reporting status to a paragraph
-var statusP;
+let statusP;
 
 // This is for a user drawn image
-var userPixels;
-var smaller;
-var ux = 16;
-var uy = 100;
-var uw = 140;
+let userPixels;
+let smaller;
+let ux = 16;
+let uy = 100;
+let uw = 140;
+
+
+// Image block positions
+let trainDataXPos = 216;
+let trainDataYPos = 16;
+
+let testDataXPos = 280;
+let testDataYPos = 16;
+
+let guessTextXPos = 358;
+let guessTextYPos = 64;
+
+let smallerCopyImageXPos = 280;
+let smallerCopyImageYPos = 100;
+
+let networkGuessXPos = 346;
+let networkGuessYPos = 100;
+
+let networkGuessTextXPos = 356;
+let networkGuessTextYPos = 148;
+
 
 // Load training and testing data
 // Note this is not the full dataset
@@ -52,7 +73,7 @@ function preload() {
 
 function setup() {
     // Canvas
-    createCanvas(320, 280);
+    createCanvas(520, 280);
     // pixelDensity(1);
 
     // Create the neural network
@@ -60,7 +81,7 @@ function setup() {
 
     // Status paragraph
     statusP = createP('');
-    var pauseButton = createButton('pause');
+    let pauseButton = createButton('pause');
     pauseButton.mousePressed(toggle);
 
     // Toggle the state to start and stop
@@ -75,7 +96,7 @@ function setup() {
     }
 
     // This button clears the user pixels
-    var clearButton = createButton('clear');
+    let clearButton = createButton('clear');
     clearButton.mousePressed(clearUserPixels);
     // Just draw a black background
     function clearUserPixels() {
@@ -83,7 +104,7 @@ function setup() {
     }
 
     // Save the model
-    var saveButton = createButton('save model');
+    let saveButton = createButton('save model');
     saveButton.mousePressed(saveModelJSON);
     // Save all the model is a JSON file
     // TODO: add reloading functionality!
@@ -94,14 +115,14 @@ function setup() {
 
 
     // Create a blank user canvas
-    userPixels = createGraphics(uw, uw);
+    userPixels = createGraphics(uw+30, uw+30);
     userPixels.background(0);
 
     // Create a smaller 28x28 image
     smaller = createImage(28, 28, RGB);
     // This is sort of silly, but I'm copying the user pixels
     // so that we see a blank image to start
-    var img = userPixels.get();
+    let img = userPixels.get();
     smaller.copy(img, 0, 0, uw, uw, 0, 0, smaller.width, smaller.height);
 }
 
@@ -115,35 +136,34 @@ function mouseDragged() {
         userPixels.stroke(255);
         userPixels.ellipse(mouseX - ux, mouseY - uy, 16, 16);
         // Sample down into the smaller p5.Image object
-        var img = userPixels.get();
+        let img = userPixels.get();
         smaller.copy(img, 0, 0, uw, uw, 0, 0, smaller.width, smaller.height);
     }
 }
 
 
 function draw() {
-    background(200);
-
     // Train (this does just one image per cycle through draw)
-    var traindata = train();
+    let traindata = train();
 
     // Test
-    var result = test();
+    let result = test();
     // The results come back as an array of 3 things
     // Input data
-    var testdata = result[0];
+    let testdata = result[0];
     // What was the guess?
-    var guess = result[1];
+    let guess = result[1];
     // Was it correct?
-    var correct = result[2];
+    let correct = result[2];
 
     // Draw the training and testing image
-    drawImage(traindata, ux, 16, 2, 'training');
-    drawImage(testdata, 180, 16, 2, 'test');
+    drawImage(traindata, trainDataXPos, trainDataYPos, 2, 'training');
+
+    drawImage(testdata, testDataXPos, testDataYPos, 2, 'test');
 
     // Draw the resulting guess
     fill(0);
-    rect(246, 16, 2 * 28, 2 * 28);
+    rect(346, 16, 2 * 28, 2 * 28);
     // Was it right or wrong?
     if (correct) {
         fill(0, 255, 0);
@@ -151,7 +171,8 @@ function draw() {
         fill(255, 0, 0);
     }
     textSize(60);
-    text(guess, 258, 64);
+
+    text(guess, guessTextXPos, guessTextYPos);
 
     // Tally total correct
     if (correct) {
@@ -159,67 +180,65 @@ function draw() {
     }
     totalGuesses++;
 
-    // Show performance and # of epochs
-    var status = 'performance: ' + nf(totalCorrect / totalGuesses, 0, 2);
+    // Show accuracy and # of epochs
+    let status = 'accuracy: ' + nf(totalCorrect / totalGuesses, 0, 2);
     status += '<br>';
     // Percent correct since the sketch began
-    var percent = 100 * trainingIndex / training.length;
+    let percent = 100 * trainingIndex / training.length;
     status += 'epochs: ' + epochs + ' (' + nf(percent, 1, 2) + '%)';
     statusP.html(status);
-
 
     // Draw the user pixels
     image(userPixels, ux, uy);
     fill(0);
     textSize(12);
-    text('draw here', ux, uy + uw + 16);
+    text('Draw here:', ux, 90);
     // Draw the sampled down image
-    image(smaller, 180, uy, 28 * 2, 28 * 2);
+    image(smaller, smallerCopyImageXPos, smallerCopyImageYPos, 28 * 2, 28 * 2);
 
     // Change the pixels from the user into network inputs
-    var inputs = [];
+    let inputs = [];
     smaller.loadPixels();
-    for (var i = 0; i < smaller.pixels.length; i += 4) {
+    for (let i = 0; i < smaller.pixels.length; i += 4) {
         // Just using the red channel since it's a greyscale image
         // Not so great to use inputs of 0 so smallest value is 0.01
         inputs[i / 4] = map(smaller.pixels[i], 0, 255, 0, 0.99) + 0.01;
     }
     // Get the outputs
-    var outputs = nn.query(inputs);
+    let outputs = nn.query(inputs);
     // What is the best guess?
-    var guess = findMax(outputs);
+    guess = findMax(outputs);
 
     // Draw the resulting guess
     fill(0);
-    rect(246, uy, 2 * 28, 2 * 28);
+    rect(networkGuessXPos, networkGuessYPos, 2 * 28, 2 * 28);
     fill(255);
     textSize(60);
-    text(guess, 258, uy + 48);
+    text(guess, networkGuessTextXPos, networkGuessTextYPos);
 }
 
 // Function to train the network
 function train() {
-
     // Grab a row from the CSV
-    var values = training[trainingIndex].split(',');
+    let values = training[trainingIndex].split(',');
 
     // Make an input array to the neural network
-    var inputs = [];
+    let inputs = [];
 
     // Starts at index 1
-    for (var i = 1; i < values.length; i++) {
+    for (let i = 1; i < values.length; i++) {
         // Normalize the inputs 0-1, not so great to use inputs of 0 so add 0.01
         inputs[i - 1] = map(Number(values[i]), 0, 255, 0, 0.99) + 0.01;
     }
 
     // Now create an array of targets
-    targets = [];
+    let targets = [];
     // Everything by default is wrong
-    for (var k = 0; k < output_nodes; k++) {
+    for (let k = 0; k < output_nodes; k++) {
         targets[k] = 0.01;
     }
     // The first spot is the class
-    var label = Number(values[0]);
+    let label = Number(values[0]);
     // So it should get a 0.99 output
     targets[label] = 0.99;
     //console.log(targets);
@@ -237,42 +256,40 @@ function train() {
 
     // Return the inputs to draw them
     return inputs;
-
 }
 
 
 // Function to test the network
 function test() {
-
     // Grab a row from the CSV
-    var values = training[testingIndex].split(',');
+    let values = training[testingIndex].split(',');
 
     // Make an input array to the neural network
-    var inputs = [];
+    let inputs = [];
 
     // Starts at index 1
-    for (var i = 1; i < values.length; i++) {
+    for (let i = 1; i < values.length; i++) {
         // Normalize the inputs 0-1, not so great to use inputs of 0 so add 0.01
         inputs[i - 1] = map(Number(values[i]), 0, 255, 0, 0.99) + 0.01;
     }
 
     // The first spot is the class
-    var label = Number(values[0]);
+    let label = Number(values[0]);
 
     // Run the data through the network
-    var outputs = nn.query(inputs);
+    let outputs = nn.query(inputs);
 
     // Find the index with the highest probability
-    var guess = findMax(outputs);
+    let guess = findMax(outputs);
 
     // Was the network right or wrong?
-    var correct = false;
+    let correct = false;
     if (guess == label) {
         correct = true;
     }
 
     // Switch to a new testing data point every so often
-    if (frameCount % 30 == 0) {
+    if (frameCount % 30 === 0) {
         testingIndex++;
         if (testingIndex == testing.length) {
             testingIndex = 0;
@@ -281,17 +298,15 @@ function test() {
 
     // For reporting in draw return the results
     return [inputs, guess, correct];
-
 }
 
 // A function to find the maximum value in an array
 function findMax(list) {
-
     // Highest so far?
-    var record = 0;
-    var index = 0;
+    let record = 0;
+    let index = 0;
     // Check every element
-    for (var i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
         // Higher?
         if (list[i] > record) {
             record = list[i];
@@ -305,15 +320,15 @@ function findMax(list) {
 // Draw the array of floats as an image
 function drawImage(values, xoff, yoff, w, txt) {
     // it's a 28 x 28 image
-    var dim = 28;
+    let dim = 28;
 
     // For every value
-    for (var k = 0; k < values.length; k++) {
+    for (let k = 0; k < values.length; k++) {
         // Scale up to 256
-        var brightness = values[k] * 256;
+        let brightness = values[k] * 256;
         // Find x and y
-        var x = k % dim;
-        var y = floor(k / dim);
+        let x = k % dim;
+        let y = floor(k / dim);
         // Draw rectangle
         fill(brightness);
         noStroke();

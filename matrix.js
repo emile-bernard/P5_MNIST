@@ -13,9 +13,9 @@ function Matrix(rows, cols) {
     this.rows = rows;
     this.cols = cols;
     this.matrix = new Array(rows);
-    for (var i = 0; i < this.rows; i++) {
+    for (let i = 0; i < this.rows; i++) {
         this.matrix[i] = new Array(cols);
-        for (var j = 0; j < this.cols; j++) {
+        for (let j = 0; j < this.cols; j++) {
             this.matrix[i][j] = 0;
         }
     }
@@ -23,88 +23,88 @@ function Matrix(rows, cols) {
 
 // This fills the matrix with random values (gaussian distribution)
 Matrix.prototype.randomize = function() {
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.cols; j++) {
+    for (let i = 0; i < this.rows; i++) {
+        for (let j = 0; j < this.cols; j++) {
             this.matrix[i][j] = randomGaussian();
             //this.matrix[i][j] = random(-1, 1);
         }
     }
-}
+};
 
 // Take the matrix and make it a 1 dimensional array
 Matrix.prototype.toArray = function() {
     // Add all the values to the array
-    var arr = [];
-    for (var i = 0; i < this.rows; i++) {
-        for (var j = 0; j < this.cols; j++) {
+    let arr = [];
+    for (let i = 0; i < this.rows; i++) {
+        for (let j = 0; j < this.cols; j++) {
             arr.push(this.matrix[i][j]);
         }
     }
     return arr;
-}
+};
 
 
 // This transposes a matrix
 // rows X cols --> cols X rows
 Matrix.prototype.transpose = function() {
-    var result = new Matrix(this.cols, this.rows);
-    for (var i = 0; i < result.rows; i++) {
-        for (var j = 0; j < result.cols; j++) {
+    let result = new Matrix(this.cols, this.rows);
+    for (let i = 0; i < result.rows; i++) {
+        for (let j = 0; j < result.cols; j++) {
             result.matrix[i][j] = this.matrix[j][i];
         }
     }
     return result;
-}
+};
 
 // This makes a copy of the matrix
 Matrix.prototype.copy = function() {
-    var result = new Matrix(this.rows, this.cols);
-    for (var i = 0; i < result.rows; i++) {
-        for (var j = 0; j < result.cols; j++) {
+    let result = new Matrix(this.rows, this.cols);
+    for (let i = 0; i < result.rows; i++) {
+        for (let j = 0; j < result.cols; j++) {
             result.matrix[i][j] = this.matrix[i][j];
         }
     }
     return result;
-}
+};
 
 // This adds another matrix or a single value
 Matrix.prototype.add = function(other) {
     // Are we trying to add a Matrix?
     if (other instanceof Matrix) {
-        for (var i = 0; i < this.rows; i++) {
-            for (var j = 0; j < this.cols; j++) {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
                 this.matrix[i][j] += other.matrix[i][j];
             }
         }
         // Or just a single scalar value?
     } else {
-        for (var i = 0; i < this.rows; i++) {
-            for (var j = 0; j < this.cols; j++) {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
                 this.matrix[i][j] += other;
             }
         }
     }
-}
+};
 
 // This multiplies another matrix or a single value
 // This is different than the dot() function!
 Matrix.prototype.multiply = function(other) {
     // Are we trying to multiply a Matrix?
     if (other instanceof Matrix) {
-        for (var i = 0; i < this.rows; i++) {
-            for (var j = 0; j < this.cols; j++) {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
                 this.matrix[i][j] *= other.matrix[i][j];
             }
         }
         // Or just a single scalar value?
     } else {
-        for (var i = 0; i < this.rows; i++) {
-            for (var j = 0; j < this.cols; j++) {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
                 this.matrix[i][j] *= other;
             }
         }
     }
-}
+};
 
 
 // These are some static functions to operate on a matrix
@@ -112,25 +112,25 @@ Matrix.prototype.multiply = function(other) {
 // This is the trickiest one
 // Takes a function and applies it to all values in the matrix
 Matrix.map = function(m, fn) {
-    var result = new Matrix(m.rows, m.cols);
-    for (var i = 0; i < result.rows; i++) {
-        for (var j = 0; j < result.cols; j++) {
+    let result = new Matrix(m.rows, m.cols);
+    for (let i = 0; i < result.rows; i++) {
+        for (let j = 0; j < result.cols; j++) {
             result.matrix[i][j] = fn(m.matrix[i][j]);
         }
     }
     return result;
-}
+};
 
 // Subtracts one matrix from another
 Matrix.subtract = function(a, b) {
-    var result = new Matrix(a.rows, a.cols);
-    for (var i = 0; i < result.rows; i++) {
-        for (var j = 0; j < result.cols; j++) {
+    let result = new Matrix(a.rows, a.cols);
+    for (let i = 0; i < result.rows; i++) {
+        for (let j = 0; j < result.cols; j++) {
             result.matrix[i][j] = a.matrix[i][j] - b.matrix[i][j];
         }
     }
     return result;
-}
+};
 
 
 // Multiplies two matrices together
@@ -141,12 +141,12 @@ Matrix.dot = function(a, b) {
         return;
     }
     // Make a new matrix
-    var result = new Matrix(a.rows, b.cols);
-    for (var i = 0; i < a.rows; i++) {
-        for (var j = 0; j < b.cols; j++) {
+    let result = new Matrix(a.rows, b.cols);
+    for (let i = 0; i < a.rows; i++) {
+        for (let j = 0; j < b.cols; j++) {
             // Sum all the rows of A times columns of B
-            var sum = 0;
-            for (var k = 0; k < a.cols; k++) {
+            let sum = 0;
+            for (let k = 0; k < a.cols; k++) {
                 sum += a.matrix[i][k] * b.matrix[k][j];
             }
             // New value
@@ -154,17 +154,17 @@ Matrix.dot = function(a, b) {
         }
     }
     return result;
-}
+};
 
 
 // Turn a 1 dimensional array into a matrix
 Matrix.fromArray = function(array) {
-    var m = new Matrix(array.length, 1);
-    for (var i = 0; i < array.length; i++) {
+    let m = new Matrix(array.length, 1);
+    for (let i = 0; i < array.length; i++) {
         m.matrix[i][0] = array[i];
     }
     return m;
-}
+};
 
 // Visualize the matrix in the browser window
 // if idSelector is passed, the matrix is displayed in the table with the given id
@@ -205,10 +205,10 @@ Matrix.prototype.visualize = function(idSelector) {
             cell.style.textAlign = 'center';
             cell.style.color = 'black';
             row.appendChild(cell);
-        })
+        });
         table.appendChild(row);
     });
-}
+};
 
 Matrix.prototype.pprint = function(){ //"pretty print" the matrix
     let fstring = '[';
@@ -216,4 +216,4 @@ Matrix.prototype.pprint = function(){ //"pretty print" the matrix
         fstring +=  (i!=0?' ':'') + ` [${this.matrix[i].map(x=>' ' + x.toString() + ' ')}],\n`;
     }
     console.log(fstring.substring(0,fstring.length-2) + ' ]');
-}
+};
