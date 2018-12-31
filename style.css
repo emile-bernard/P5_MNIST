@@ -25,41 +25,7 @@ canvas {
 button {
     margin: 2px;
     padding: 4px;
-}
-
-.buttonText {
-    display: inline;
-    font-size: 14px;
-    color: black;
-}
-
-.buttonHeader{
-    margin: 4px;
-    font-weight: lighter;
-    font-size: 14px;
-    margin-bottom: 10px;
-    color: black;
-}
-
-#statusContainer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-#statusDataContainer {
-    display: flex;
-    flex-direction: column;
-    background: #4FB99F;
-    width: 100%;
-}
-
-#statusDataTextContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-items: center;
+    width: 100px;
 }
 
 #home-page-wrapper {
@@ -71,8 +37,8 @@ button {
 }
 
 #home-page-brand-name{
-    color: #76fcfc;
-    text-shadow: 2px 2px #324a4f;
+    color: #42fc47;
+    text-shadow: 2px 2px #2a4f33;
     font-size: 2.8em;
 }
 
